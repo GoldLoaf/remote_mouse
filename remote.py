@@ -18,8 +18,7 @@ class Remote():
         sock.sendto('ping'.encode('utf-8'), (IP, PORT))
         ans = sock.recv(1024).decode('utf-8')
         if ans == 'pong':
-            print('connected')
-            return 'ok'
+            print('connected to', self.IP)
 
     def connect_controlled(self):
         IP = ''
@@ -33,6 +32,7 @@ class Remote():
         sock.close()
 
     def start_controller(self):
+        self.connect_controller()
         IP = self.ip
         PORT = 14888
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -51,6 +51,7 @@ class Remote():
             time.sleep(0.033)
 
     def start_controlled(self):
+        self.connect_controlled()
         IP = ''
         PORT = 14888
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
