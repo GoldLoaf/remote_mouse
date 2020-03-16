@@ -9,30 +9,29 @@ class Remote():
         if len(settings) == 3:
             self.ip = settings[2]
 
-    def connect_controller(self):
-        IP = self.ip
-        PORT = 14888
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        print('connecting...')
-        sock.sendto('ping'.encode('utf-8'), (IP, PORT))
-        ans = sock.recv(1024).decode('utf-8')
-        if ans == 'pong':
-            print('connected to', self.IP)
-
-    def connect_controlled(self):
-        IP = ''
-        PORT = 14888
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.bind((IP, PORT))
-        mess, addr = sock.recvfrom(1024)
-        if mess.decode('utf-8') == 'ping':
-            print('connected with:', addr)
-            sock.sendto('pong'.encode('utf-8'), addr)
-        sock.close()
+    # def connect_controller(self):
+    #     IP = self.ip
+    #     PORT = 14888
+    #     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    #     sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    #     print('connecting...')
+    #     sock.sendto('ping'.encode('utf-8'), (IP, PORT))
+    #     ans = sock.recv(1024).decode('utf-8')
+    #     if ans == 'pong':
+    #         print('connected to', self.IP)
+    #
+    # def connect_controlled(self):
+    #     IP = ''
+    #     PORT = 14888
+    #     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    #     sock.bind((IP, PORT))
+    #     mess, addr = sock.recvfrom(1024)
+    #     if mess.decode('utf-8') == 'ping':
+    #         print('connected with:', addr)
+    #         sock.sendto('pong'.encode('utf-8'), addr)
+    #     sock.close()
 
     def start_controller(self):
-        self.connect_controller()
         IP = self.ip
         PORT = 14888
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -51,7 +50,6 @@ class Remote():
             time.sleep(0.033)
 
     def start_controlled(self):
-        self.connect_controlled()
         IP = ''
         PORT = 14888
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -61,7 +59,7 @@ class Remote():
             pos = json.loads(data)
             x = pos['x']
             y = pos['y']
-            pyautogui.moveRel(x, y, 0.033)
+            pyautogui.moveRel(x, -y, pause=0)
 
     def start(self):
         if self.mode == '-c':
