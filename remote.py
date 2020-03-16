@@ -3,6 +3,9 @@ import sys
 import pyautogui
 import json
 import time
+
+pyautogui.FAILSAFE = False
+
 class Remote():
     def __init__(self, settings):
         self.mode = settings[1]
@@ -60,12 +63,18 @@ class Remote():
         sock.bind((IP, PORT))
         sock.listen(1)
         print('Ожидаю соединения...')
-        сonn, addr = sock.accept()
+        conn, addr = sock.accept()
         print(f'Подключено к {addr[0]}')
         conn.send('ok'.encode('utf-8'))
         while True:
             data = conn.recv(1024).decode('utf-8')
-            pos = json.loads(data)
+            try:
+                pos = json.loads(data)
+            except:
+                continue
+            if not data:
+                break
+            cx, cy = pyautogui.position()
             x = pos['x']
             y = pos['y']
             pyautogui.moveRel(x, -y, pause=0)
