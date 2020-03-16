@@ -34,7 +34,11 @@ class Remote():
     def start_controller(self):
         IP = self.ip
         PORT = 14888
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((IP, PORT))
+        ans = sock.recv(1024).decode('utf-8')
+        if ans == 'ok':
+            print(f'Успешно подключено к {self.ip}')
         xr, yr = pyautogui.position()
         while True:
             xn, yn = pyautogui.position()
@@ -46,16 +50,21 @@ class Remote():
                 'y' : y
             }
             pos = json.dumps(pos)
-            sock.sendto(pos.encode('utf-8'), (IP, PORT))
+            sock.send(pos.encode('utf-8'))
             time.sleep(0.033)
 
     def start_controlled(self):
         IP = ''
         PORT = 14888
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.bind((IP, PORT))
+        sock.listen(1)
+        print('Ожидаю соединения...')
+        сonn, addr = sock.accept()
+        print(f'Подключено к {addr[0]}')
+        conn.send('ok'.encode('utf-8'))
         while True:
-            data = sock.recv(1024).decode('utf-8')
+            data = conn.recv(1024).decode('utf-8')
             pos = json.loads(data)
             x = pos['x']
             y = pos['y']
