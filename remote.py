@@ -32,8 +32,10 @@ class Remote():
             }
             pos = json.dumps(pos)
             sock.send(pos.encode('utf-8'))
-            time.sleep(0.033)
-
+            try:
+                time.sleep(0.033)
+            except KeyboardInterrupt:
+                sock.send('q'.encode('utf-8'))
     def start_controlled(self):
         IP = ''
         PORT = 14888
@@ -46,13 +48,13 @@ class Remote():
         conn.send('ok'.encode('utf-8'))
         while True:
             data = conn.recv(1024).decode('utf-8')
+            if data == 'q':
+                print('Соединение разорвано')
+                break
             try:
                 pos = json.loads(data)
             except:
                 continue
-            if not data:
-                break
-            cx, cy = pyautogui.position()
             x = pos['x']
             y = pos['y']
             pyautogui.moveRel(x, -y, pause=0)
