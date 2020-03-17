@@ -36,6 +36,8 @@ class Remote():
                 time.sleep(0.033)
             except KeyboardInterrupt:
                 sock.send('q'.encode('utf-8'))
+                print('Соединение разорвано')
+                break
     def start_controlled(self):
         IP = ''
         PORT = 14888
